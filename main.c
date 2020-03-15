@@ -3,6 +3,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 using namespace cv;
@@ -10,6 +11,12 @@ using namespace cv;
 void detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
                     double scale);
+
+void Bolinha(Mat& img, CascadeClassifier& cascade,
+                    double scale);
+
+int velocidadex();
+int velocidadey();
 
 string cascadeName;
 string nestedCascadeName;
@@ -66,7 +73,6 @@ int main( int argc, const char** argv )
     cascadeName = folder + "haarcascade_frontalface_alt.xml";
     nestedCascadeName = folder + "haarcascade_eye_tree_eyeglasses.xml";
     inputName = "/dev/video0";
-    //inputName = inputName = "video2019.2.mp4";
 
     if (!nestedCascade.load(samples::findFileOrKeep(nestedCascadeName)))
         cerr << "WARNING: Could not load classifier cascade for nested objects" << endl;
@@ -94,6 +100,7 @@ int main( int argc, const char** argv )
 
             //Mat frame1 = frame.clone();
             detectAndDraw( frame, cascade, nestedCascade, scale);
+            Bolinha(frame, cascade, scale);
 
             char c = (char)waitKey(10);
             if( c == 27 || c == 'q' || c == 'Q' )
@@ -104,11 +111,119 @@ int main( int argc, const char** argv )
     return 0;
 }
 
+void Bolinha(Mat& img, CascadeClassifier& cascade,
+                    double scale){
+    int rand();
+    static int xPos = 310, yPos = 230;
+    static int xSpd = velocidadex(), yspd = velocidadey();
+    static int randito, randito2;
+
+
+    static Point pos;
+    static int placar1 = 0, placar2 = 0;
+    if(xPos > 660){
+        xPos = 310;
+        yPos = 230;
+        placar1++;
+
+        xSpd = velocidadex();
+        yspd = velocidadey();
+    }
+
+    
+     if(xPos < -20){
+        xPos = 310;
+        yPos = 230;
+        placar2++;
+        xSpd = velocidadex();
+        yspd = velocidadey();
+    }
+            
+    if(yPos > 460 || yPos < 20){
+           yspd = - yspd;
+    }
+    
+    xPos+=xSpd;
+    yPos+=yspd;
+ 
+    pos.x = xPos;
+    pos.y = yPos;
+    
+    printf("%d, %d, %d, %d", xPos, yPos, pos.x, pos.y);
+
+    circle( img, pos, 20, Scalar(255,255,0), -1, 8, 0 );
+
+    char str[40];
+    sprintf(str,"%d             %d",placar1, placar2);
+    cv::putText(img, //target image
+        str, //text
+        cv::Point(80, 50), //top-left position
+        cv::FONT_HERSHEY_DUPLEX,
+        2.0,
+        CV_RGB(255, 255, 255), //font color
+        3);
+
+
+    imshow( "result", img );
+
+}
+
+int velocidadex(){
+    int spd, randito = rand() % 5;
+
+    switch(randito){
+        case 0:
+            spd = 6;
+            break;
+        case 1:
+            spd = 7;
+            break;
+        case 2:
+            spd = 8;
+            break;
+        case 3:
+            spd = 9;
+            break;
+        case 4:
+            spd = 10;
+            break;
+    }
+
+    if(rand() % 2 == 0)
+    spd = - spd;
+
+    return spd;
+}
+
+int velocidadey(){
+    int spd, randito = rand() % 4;
+
+    switch(randito){
+        case 0:
+            spd = 3;
+            break;
+        case 1:
+            spd = 4;
+            break;
+        case 2:
+            spd = 5;
+            break;
+        case 3:
+            spd = 6;
+            break;
+    }
+
+    if(rand() % 2 == 0)
+    spd = - spd;
+
+    return spd;
+}
+
 void detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
                     double scale)
 {
-    static int xSpd = 7, yspd = 4, xPos = 310, yPos = 230;
+    
     static int frames = 0;
     double t = 0;
     vector<Rect> faces, faces2;
@@ -161,54 +276,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
                    color, 3, 8, 0);
         if( nestedCascade.empty() )
             continue;
-        /*smallImgROI = smallImg( r );
-        nestedCascade.detectMultiScale( smallImgROI, nestedObjects,
-            1.1, 2, 0
-            //|CASCADE_FIND_BIGGEST_OBJECT
-            //|CASCADE_DO_ROUGH_SEARCH
-            //|CASCADE_DO_CANNY_PRUNING
-            |CASCADE_SCALE_IMAGE,
-            Size(30, 30) );
-        for ( size_t j = 0; j < nestedObjects.size(); j++ )
-        {
-
-            Rect nr = nestedObjects[j];
-            center.x = cvRound((r.x + nr.x + nr.width*0.5)*scale);
-            center.y = cvRound((r.y + nr.y + nr.height*0.5)*scale);
-            radius = cvRound((nr.width + nr.height)*0.25*scale);
-            circle( img, center, radius, color, 3, 8, 0 );
-        }*/
     }
-    static Point pos;
-
-    if(xPos > 640 || xPos < 0){
-            xPos = 310;
-            yPos = 230;
-            /*if(rand()%2 == 0)
-            xSpd -= xSpd;
-            if(rand()%2 == 0)
-            yspd -= yspd;*/
-    }
-            
-    if(yPos > 460 || yPos < 20){
-           yspd = - yspd;
-    }
-    
-            xPos+=xSpd;
-            yPos+=yspd;
-            pos.x = xPos;
-            pos.y = yPos;
-            printf("%d, %d, %d, %d", xPos, yPos, pos.x, pos.y);
-            //drawTransparency2(img, fruta, xPos, yPos);
-    
-    circle( img, pos, 20, Scalar(255,255,0), -1, 8, 0 );
-    cv::putText(img, //target image
-        "DETECTOR DE CORNO", //text
-        cv::Point(150, 50), //top-left position
-        cv::FONT_HERSHEY_DUPLEX,
-        1.0,
-        CV_RGB(255, 0, 0), //font color
-        2);
 
     imshow( "result", img );
 }
