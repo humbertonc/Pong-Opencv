@@ -95,12 +95,12 @@ int main( int argc, const char** argv )
         for(;;)
         {
             capture >> frame;
+            flip(frame, frame,1);
             if( frame.empty() )
                 break;
 
             //Mat frame1 = frame.clone();
             detectAndDraw( frame, cascade, nestedCascade, scale);
-            Bolinha(frame, cascade, scale);
 
             char c = (char)waitKey(10);
             if( c == 27 || c == 'q' || c == 'Q' )
@@ -111,62 +111,6 @@ int main( int argc, const char** argv )
     return 0;
 }
 
-void Bolinha(Mat& img, CascadeClassifier& cascade,
-                    double scale){
-    int rand();
-    static int xPos = 310, yPos = 230;
-    static int xSpd = velocidadex(), yspd = velocidadey();
-    static int randito, randito2;
-
-
-    static Point pos;
-    static int placar1 = 0, placar2 = 0;
-    if(xPos > 660){
-        xPos = 310;
-        yPos = 230;
-        placar1++;
-
-        xSpd = velocidadex();
-        yspd = velocidadey();
-    }
-
-    
-     if(xPos < -20){
-        xPos = 310;
-        yPos = 230;
-        placar2++;
-        xSpd = velocidadex();
-        yspd = velocidadey();
-    }
-            
-    if(yPos > 460 || yPos < 20){
-           yspd = - yspd;
-    }
-    
-    xPos+=xSpd;
-    yPos+=yspd;
- 
-    pos.x = xPos;
-    pos.y = yPos;
-    
-    printf("%d, %d, %d, %d", xPos, yPos, pos.x, pos.y);
-
-    circle( img, pos, 20, Scalar(255,255,0), -1, 8, 0 );
-
-    char str[40];
-    sprintf(str,"%d             %d",placar1, placar2);
-    cv::putText(img, //target image
-        str, //text
-        cv::Point(80, 50), //top-left position
-        cv::FONT_HERSHEY_DUPLEX,
-        2.0,
-        CV_RGB(255, 255, 255), //font color
-        3);
-
-
-    imshow( "result", img );
-
-}
 
 int velocidadex(){
     int spd, randito = rand() % 5;
@@ -278,5 +222,75 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
             continue;
     }
 
+    int rand();
+    static int xPos = 310, yPos = 230;
+    static int xSpd = velocidadex(), yspd = velocidadey();
+    static int randito, randito2;
+
+
+    static Point pos;
+    static int placar1 = 0, placar2 = 0;
+    if(xPos > 660){
+        xPos = 310;
+        yPos = 230;
+        placar1++;
+
+        xSpd = velocidadex();
+        yspd = velocidadey();
+    }
+
+    
+     if(xPos < -20){
+        xPos = 310;
+        yPos = 230;
+        placar2++;
+        xSpd = velocidadex();
+        yspd = velocidadey();
+    }
+            
+    if(yPos > 460 || yPos < 20){
+           yspd = - yspd;
+    }
+    
+    xPos+=xSpd;
+    yPos+=yspd;
+ 
+    pos.x = xPos;
+    pos.y = yPos;
+    
+    //printf("%d, %d, %d, %d", xPos, yPos, pos.x, pos.y);
+
+    circle( img, pos, 20, Scalar(255,255,0), -1, 8, 0 );
+
+    char str[40];
+    sprintf(str,"%d            %d",placar1, placar2);
+    cv::putText(img, //target image
+        str, //text
+        cv::Point(60, 50), //top-left position
+        cv::FONT_HERSHEY_DUPLEX,
+        2.0,
+        CV_RGB(255, 255, 255), //font color
+        3);
+
     imshow( "result", img );
+    const int margem = 8;
+
+    for (size_t i = 0; i < faces.size(); i++){
+        Rect r = faces[i];
+       // if(xPos > r.x && xPos < r.x + r.width){
+         //   xSpd = -xSpd;
+          //  yspd = -yspd;
+          printf("%d  %d  %d  %d", r.x, r.y, r.width, r.height);
+        if((yPos + 20 > r.y && yPos - 20 < r.y + r.height) && ((xPos + 20 < r.x + margem) && (xPos + 20 > r.x - margem))){
+            //entrara nesse if se a bolinha estiver vindo da esquerda para a direita
+            if(xSpd > 0)
+            xSpd = - xSpd;//garantia que a bolinha so seja invertida uma vez
+
+
+        }else if(( yPos + 20 > r.y && yPos - 20 < r.y + r.height) && ((xPos - 20 < r.x + r.width + margem) && (xPos - 20 > r.x + r.width - margem))){
+            //entrara nesse if se a bolinha estiver vindo da direita para a esquerda
+            if(xSpd < 0)
+            xSpd = - xSpd;
+        }
+    }
 }
