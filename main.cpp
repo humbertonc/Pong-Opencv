@@ -266,7 +266,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
     sprintf(str,"%d            %d",placar1, placar2);
     cv::putText(img, //target image
         str, //text
-        cv::Point(60, 50), //top-left position
+        cv::Point(70, 50), //top-left position
         cv::FONT_HERSHEY_DUPLEX,
         2.0,
         CV_RGB(255, 255, 255), //font color
@@ -281,16 +281,17 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
          //   xSpd = -xSpd;
           //  yspd = -yspd;
           printf("%d  %d  %d  %d", r.x, r.y, r.width, r.height);
-        if((yPos + 20 > r.y && yPos - 20 < r.y + r.height) && ((xPos + 20 < r.x + margem) && (xPos + 20 > r.x - margem))){
+        if((yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height)) && ((xPos + 20 < cvRound(r.x) + margem) && (xPos + 20 > cvRound(r.x) - margem))){
             //entrara nesse if se a bolinha estiver vindo da esquerda para a direita
             if(xSpd > 0)
             xSpd = - xSpd;//garantia que a bolinha so seja invertida uma vez
 
 
-        }else if(( yPos + 20 > r.y && yPos - 20 < r.y + r.height) && ((xPos - 20 < r.x + r.width + margem) && (xPos - 20 > r.x + r.width - margem))){
+        }else if(( yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height)) && ((xPos - 20 < cvRound(r.x) + cvRound(r.width) + margem) && (xPos - 20 > cvRound(r.x) + cvRound(r.width) - margem))){
             //entrara nesse if se a bolinha estiver vindo da direita para a esquerda
             if(xSpd < 0)
             xSpd = - xSpd;
+    
         }
     }
 }
