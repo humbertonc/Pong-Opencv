@@ -277,21 +277,47 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
 
     for (size_t i = 0; i < faces.size(); i++){
         Rect r = faces[i];
-       // if(xPos > r.x && xPos < r.x + r.width){
-         //   xSpd = -xSpd;
-          //  yspd = -yspd;
+        if((xPos - 15 > cvRound(r.x) && xPos < cvRound(r.x) + cvRound(r.width)) 
+        && ((yPos + 20 < cvRound(r.y) + margem) && (yPos + 20 > cvRound(r.y) - margem))){
+            //a bolinha vem de cima para baixo
+            if(yspd > 0){
+            xSpd = -xSpd;
+            yspd = -yspd;
+            }
+
+        }else if((xPos - 15 > cvRound(r.x) && xPos < cvRound(r.x) + cvRound(r.width)) 
+        && ((yPos - 20 < cvRound(r.y) + cvRound(r.height) + margem) && (yPos - 20 > cvRound(r.y) + cvRound(r.height) - margem))){
+            //a bolinha vem de baixo para cima
+            if(yspd < 0){
+            xSpd = -xSpd;
+            yspd = -yspd;
+            }
+            
+        }
+          
           printf("%d  %d  %d  %d", r.x, r.y, r.width, r.height);
-        if((yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height)) && ((xPos + 20 < cvRound(r.x) + margem) && (xPos + 20 > cvRound(r.x) - margem))){
+
+        if((yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height))
+         && ((xPos + 20 < cvRound(r.x) + margem) && (xPos + 20 > cvRound(r.x) - margem))){
             //entrara nesse if se a bolinha estiver vindo da esquerda para a direita
             if(xSpd > 0)
             xSpd = - xSpd;//garantia que a bolinha so seja invertida uma vez
+            else if(xSpd == 0){
+            xSpd = velocidadex();
+            if(xSpd > 0)
+            xSpd = -xSpd;
+            }
 
-
-        }else if(( yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height)) && ((xPos - 20 < cvRound(r.x) + cvRound(r.width) + margem) && (xPos - 20 > cvRound(r.x) + cvRound(r.width) - margem))){
+        }else if(( yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height)) 
+        && ((xPos - 20 < cvRound(r.x) + cvRound(r.width) + margem) && (xPos - 20 > cvRound(r.x) + cvRound(r.width) - margem))){
             //entrara nesse if se a bolinha estiver vindo da direita para a esquerda
             if(xSpd < 0)
             xSpd = - xSpd;
-    
+            else if(xSpd == 0){
+            xSpd = velocidadex();
+            if(xSpd < 0)
+            xSpd = -xSpd;
+            }
         }
     }
 }
