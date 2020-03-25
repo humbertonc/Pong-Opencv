@@ -302,22 +302,13 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
             //entrara nesse if se a bolinha estiver vindo da esquerda para a direita
             if(xSpd > 0)
             xSpd = - xSpd;//garantia que a bolinha so seja invertida uma vez
-            else if(xSpd == 0){
-            xSpd = velocidadex();
-            if(xSpd > 0)
-            xSpd = -xSpd;
-            }
 
         }else if(( yPos + 20 > cvRound(r.y) && yPos - 20 < cvRound(r.y) + cvRound(r.height)) 
         && ((xPos - 20 < cvRound(r.x) + cvRound(r.width) + margem) && (xPos - 20 > cvRound(r.x) + cvRound(r.width) - margem))){
             //entrara nesse if se a bolinha estiver vindo da direita para a esquerda
             if(xSpd < 0)
             xSpd = - xSpd;
-            else if(xSpd == 0){
-            xSpd = velocidadex();
-            if(xSpd < 0)
-            xSpd = -xSpd;
-            }
+          
         }
     }
 }
