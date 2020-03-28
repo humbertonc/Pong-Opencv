@@ -235,6 +235,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
         yPos = 230;
         placar1++;
 
+        system("mplayer ding-sound-effect_2.mp3 &");
+      
         xSpd = velocidadex();
         yspd = velocidadey();
     }
@@ -244,6 +246,9 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
         xPos = 310;
         yPos = 230;
         placar2++;
+       
+        system("mplayer ding-sound-effect_2.mp3 &");
+       
         xSpd = velocidadex();
         yspd = velocidadey();
     }
